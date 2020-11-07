@@ -6774,6 +6774,8 @@ Xiaomi Redmi Pro Exclusive Edition;4.71
 Xiaomi Redmi Pro High Edition;4.71
 Xiaomi Redmi Pro Standard Edition;4.71
 Xiaomi Redmi Y1 Lite;2.9
+Xiaomi POCOPHONE F1;5.6
+POCOPHONE F1;5.6
 Xolo Black 1X;4.69
 Xolo Omega 5.5;4.69
 Xolo One HD;4.59
