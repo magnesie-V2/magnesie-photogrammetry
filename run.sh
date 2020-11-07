@@ -1,10 +1,11 @@
 
 INPUT="$1"
 WORKDIR="${INPUT}_workdir"
-RES="/res/$(basename $INPUT).ply"
+RES="/res/$(basename $INPUT)"
 
 python3 openMVS/MvgMvsPipeline.py "/datasets/$INPUT" "$WORKDIR"
 
-cp "${WORKDIR}/mvs/scene_dense_mesh_refine_texture.ply" "$RES"
+mkdir "$RES"
+cp "${WORKDIR}/mvs/*.ply" "$RES/"
 
 rm -rf "$WORKDIR"
