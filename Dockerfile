@@ -66,3 +66,15 @@ COPY ./sensor_width_camera_database.txt /sensor
 
 # Add binaries to path
 ENV PATH $PATH:/openMVG_build/bin:/openMVS_build/bin:/sensor
+
+# Install rust
+RUN apt-get -y install curl
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh  -s -- -y
+ENV PATH $PATH:/root/.cargo/bin
+
+# Build webservice
+RUN mkdir /webservice
+COPY ./webservice /webservice
+RUN cd /webservice && rustup override set nightly && cargo build --release
+
+ENTRYPOINT cd /webservice && cargo run --release
