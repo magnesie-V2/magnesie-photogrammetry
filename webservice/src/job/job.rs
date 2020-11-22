@@ -1,6 +1,7 @@
-use std::process::{Child, Command, Stdio};
+use std::process::{Child, Command};
 use uuid::Uuid;
 
+use crate::env::{get_var, PHOTOGRAMMETRY_SCRIPT};
 use crate::job::params::request::CreateJobRequest;
 
 #[derive(strum_macros::ToString, Debug)]
@@ -20,18 +21,20 @@ impl Job {
     pub fn new(request: CreateJobRequest) -> Self {
         let uuid = Uuid::new_v4();
 
-        let child = Command::new("sh")
-            .arg("-c")
-            .arg(format!("curl {}", request.callback))
-            .stderr(Stdio::null())
+        let child = Command::new(get_var(PHOTOGRAMMETRY_SCRIPT))
+            .arg(&uuid.to_string())
+            .arg(&request.callback)
+            .args(&request.photos)
             .spawn()
             .expect("job failed to start");
 
-        Job {
+        let job = Job {
             uuid,
             child,
             request,
-        }
+        };
+
+        job
     }
 
     pub fn status(&mut self) -> Status {
