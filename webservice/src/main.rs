@@ -1,5 +1,6 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+mod env;
 mod job;
 
 #[macro_use]
@@ -11,14 +12,11 @@ use rocket_contrib::json::Json;
 use std::collections::HashMap;
 use std::sync::RwLock;
 
+use env::check_env;
 use job::job::Job;
 use job::params::request::CreateJobRequest;
 use job::params::response::CreateJobResponse;
 use job::params::response::JobInfoResponse;
-
-struct ProcessState {
-    process: RwLock<HashMap<String, Job>>,
-}
 
 #[get("/")]
 fn index() -> &'static str {
@@ -54,7 +52,12 @@ fn info_job(state: State<ProcessState>, id: String) -> Option<Json<JobInfoRespon
     }
 }
 
+struct ProcessState {
+    process: RwLock<HashMap<String, Job>>,
+}
+
 fn main() {
+    check_env();
     let state = ProcessState {
         process: RwLock::new(HashMap::new()),
     };

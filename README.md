@@ -14,8 +14,8 @@ docker build --tag magnesie-photogrammetry-dev --file ./Dockerfile-dev .
 #start a new container <replace paths>
 
 #For release
-docker run --name=magnesie-instance -i -t -v <path_to_local_datasets>:/datasets -v <path_to_result_directory>:/res -p 80:8000 magnesie-photogrammetry
+docker run --rm --name=magnesie-instance -i -t -p 80:8000 magnesie-photogrammetry
 
 #For dev
-docker run --name=magnesie-instance-dev -i -t -v <path_to_local_datasets>:/datasets -v <path_to_result_directory>:/res -v $(pwd)/webservice:/webservice -p 80:8000 magnesie-photogrammetry-dev
+docker run --rm --name=magnesie-instance-dev -i -t -v $(pwd)/webservice:/webservice -p 80:8000 magnesie-photogrammetry-dev
 ```

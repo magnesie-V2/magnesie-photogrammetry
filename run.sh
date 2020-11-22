@@ -1,11 +1,33 @@
+#!/bin/bash
 
-INPUT="$1"
-WORKDIR="${INPUT}_workdir"
-RES="/res/$(basename $INPUT)"
+ID="$1"
+shift
+CALLBACK="$1"
+shift
 
-python3 openMVS/MvgMvsPipeline.py "/datasets/$INPUT" "$WORKDIR"
+PHOTO_DIR="${DATA_DIR}/${ID}"
+WORKDIR="${PHOTO_DIR}_workdir"
+MODEL_DIR="${RES_DIR}/${ID}"
 
-mkdir "$RES"
-cp "${WORKDIR}/mvs/*.ply" "$RES/"
+LOG_FILE="/logs/job/${ID}"
+
+mkdir -p "$PHOTO_DIR"
+
+echo "Start job $ID - $(date)" >"$LOG_FILE"
+
+for i in "$@"; do
+  wget -a "$LOG_FILE" "$i" -P "$PHOTO_DIR"
+done
+
+echo "Downloaded images:" &>>"$LOG_FILE"
+ls "$PHOTO_DIR" &>>"$LOG_FILE"
+python3 /openMVS/MvgMvsPipeline.py "$PHOTO_DIR" "$WORKDIR" &>>"$LOG_FILE"
+
+mkdir -p "$MODEL_DIR"
+cp "${WORKDIR}/mvs/"*".ply" "$MODEL_DIR/" &>>"$LOG_FILE"
 
 rm -rf "$WORKDIR"
+rm -rf "$PHOTO_DIR"
+
+echo "Notifying URL: $CALLBACK" &>>"$LOG_FILE"
+curl "$CALLBACK" &>>"$LOG_FILE"
