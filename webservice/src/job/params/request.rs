@@ -1,7 +1,7 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CreateJobRequest {
     pub photos: Vec<String>,
-    pub callback: String
+    pub callback: String,
 }
