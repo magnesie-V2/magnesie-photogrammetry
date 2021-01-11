@@ -69,6 +69,14 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh  -s -- -y
 ENV PATH $PATH:/root/.cargo/bin
 RUN rustup default nightly
 
+# Prepare env
+RUN mkdir /data
+ENV DATA_DIR /data
+RUN mkdir /res
+ENV RES_DIR /res
+ENV PHOTOGRAMMETRY_SCRIPT /run.sh
+RUN mkdir -p /logs/job
+
 # Build webservice
 RUN mkdir /webservice
 COPY ./webservice /webservice
@@ -79,12 +87,5 @@ RUN mkdir /sensor
 COPY ./run.sh /
 COPY ./sensor_width_camera_database.txt /sensor
 
-# Prepare env
-RUN mkdir /data
-ENV DATA_DIR /data
-RUN mkdir /res
-ENV RES_DIR /res
-ENV PHOTOGRAMMETRY_SCRIPT /run.sh
-RUN mkdir -p /logs/job
 
 ENTRYPOINT cd /webservice && cargo run --release

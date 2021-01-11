@@ -7,7 +7,7 @@ shift
 
 PHOTO_DIR="${DATA_DIR}/${ID}"
 WORKDIR="${PHOTO_DIR}_workdir"
-MODEL_DIR="${RES_DIR}/${ID}"
+MODEL_DEST="${RES_DIR}/${ID}.tar.gz"
 
 LOG_FILE="/logs/job/${ID}"
 
@@ -23,8 +23,11 @@ echo "Downloaded images:" &>>"$LOG_FILE"
 ls "$PHOTO_DIR" &>>"$LOG_FILE"
 python3 /openMVS/MvgMvsPipeline.py "$PHOTO_DIR" "$WORKDIR" &>>"$LOG_FILE"
 
-mkdir -p "$MODEL_DIR"
-cp "${WORKDIR}/mvs/"*".ply" "$MODEL_DIR/" &>>"$LOG_FILE"
+#mkdir -p "$MODEL_DIR"
+#cp "${WORKDIR}/mvs/"*".ply" "$MODEL_DIR/" &>>"$LOG_FILE"
+#cp "${WORKDIR}/mvs/"*".png" "$MODEL_DIR/" &>>"$LOG_FILE"
+cd "${WORKDIR}/mvs/"
+tar -zcvf "$MODEL_DEST" *.ply *.png &>>"$LOG_FILE"
 
 rm -rf "$WORKDIR"
 rm -rf "$PHOTO_DIR"
