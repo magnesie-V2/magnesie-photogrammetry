@@ -9,6 +9,7 @@ extern crate rocket;
 use rocket::response::status;
 use rocket::State;
 use rocket_contrib::json::Json;
+use rocket_contrib::serve::StaticFiles;
 use std::collections::HashMap;
 use std::sync::RwLock;
 
@@ -63,6 +64,7 @@ fn main() {
     };
     rocket::ignite()
         .mount("/", routes![index, create_job, info_job])
+        .mount("/res", StaticFiles::from(env!("RES_DIR")))
         .manage(state)
         .launch();
 }
