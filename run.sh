@@ -21,7 +21,7 @@ done
 
 echo "Downloaded images:" &>>"$LOG_FILE"
 ls "$PHOTO_DIR" &>>"$LOG_FILE"
-python3 /openMVS/MvgMvsPipeline.py "$PHOTO_DIR" "$WORKDIR" &>>"$LOG_FILE"
+python3 /MvgMvsPipeline.py "$PHOTO_DIR" "$WORKDIR" &>>"$LOG_FILE"
 
 #mkdir -p "$MODEL_DIR"
 #cp "${WORKDIR}/mvs/"*".ply" "$MODEL_DIR/" &>>"$LOG_FILE"
