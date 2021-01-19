@@ -23,7 +23,7 @@ impl Job {
 
         let child = Command::new(get_var(PHOTOGRAMMETRY_SCRIPT))
             .arg(&uuid.to_string())
-            .arg(&request.callback)
+            .arg(&request.callback.replace("<id>", &*uuid.to_string()))
             .args(&request.photos)
             .spawn()
             .expect("job failed to start");
