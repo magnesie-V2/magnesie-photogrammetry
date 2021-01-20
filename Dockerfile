@@ -83,6 +83,7 @@ RUN mkdir /sensor
 ENV PATH $PATH:/sensor
 
 COPY ./run.sh /
+RUN chmod a+x /run.sh
 COPY ./sensor_width_camera_database.txt /sensor
 
 
