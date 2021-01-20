@@ -28,5 +28,6 @@ COPY ./webservice /webservice
 RUN cd /webservice && cargo build --release && rm -rf target/debug
 
 COPY ./run.sh /
+RUN chmod a+x /run.sh
 
 ENTRYPOINT cd /webservice && cargo run --release
