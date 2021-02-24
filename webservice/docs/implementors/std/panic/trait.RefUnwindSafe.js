@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["webservice"] = [{"text":"impl RefUnwindSafe for ProcessState","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for Job","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for Status","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for CreateJobRequest","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for JobInfoResponse","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for CreateJobResponse","synthetic":true,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

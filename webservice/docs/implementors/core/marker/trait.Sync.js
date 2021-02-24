@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["webservice"] = [{"text":"impl Sync for ProcessState","synthetic":true,"types":[]},{"text":"impl Sync for Job","synthetic":true,"types":[]},{"text":"impl Sync for Status","synthetic":true,"types":[]},{"text":"impl Sync for CreateJobRequest","synthetic":true,"types":[]},{"text":"impl Sync for JobInfoResponse","synthetic":true,"types":[]},{"text":"impl Sync for CreateJobResponse","synthetic":true,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

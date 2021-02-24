@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["check_env","Check that all necessary environment variable have been defined"],["get_var","Access to an env variable and panic if it does not exist."]],"static":[["DATA_DIR",""],["PHOTOGRAMMETRY_SCRIPT",""],["RES_DIR",""],["VARS",""]]});

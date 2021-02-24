@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CreateJobRequest","Job creation request"]]});

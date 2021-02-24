@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CreateJobResponse","Response to a job creation request"],["JobInfoResponse","Response to a job info request"]]});
