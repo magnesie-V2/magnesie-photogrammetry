@@ -4,6 +4,7 @@ use uuid::Uuid;
 use crate::env::{get_var, PHOTOGRAMMETRY_SCRIPT};
 use crate::job::params::request::CreateJobRequest;
 
+/// Status of a job
 #[derive(strum_macros::ToString, Debug)]
 pub enum Status {
     InProgress,
@@ -11,6 +12,7 @@ pub enum Status {
     Error,
 }
 
+/// Job description
 pub struct Job {
     uuid: Uuid,
     child: Child,
@@ -18,6 +20,7 @@ pub struct Job {
 }
 
 impl Job {
+    /// Job creation from orchestrator request
     pub fn new(request: CreateJobRequest) -> Self {
         let uuid = Uuid::new_v4();
 
@@ -37,6 +40,7 @@ impl Job {
         job
     }
 
+    /// Job status computation
     pub fn status(&mut self) -> Status {
         let opt = self.child.try_wait().expect("error while fetching status");
         let status = match opt {
@@ -52,14 +56,17 @@ impl Job {
         return status;
     }
 
+    /// Uuid of the job
     pub fn uuid(&self) -> Uuid {
         self.uuid
     }
 
+    /// Child process (Bash) that is computing the job
     pub fn child(&self) -> &Child {
         &self.child
     }
 
+    /// Request that got this job created
     pub fn request(&self) -> &CreateJobRequest {
         &self.request
     }

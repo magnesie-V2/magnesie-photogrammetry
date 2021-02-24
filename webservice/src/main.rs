@@ -19,11 +19,13 @@ use job::params::request::CreateJobRequest;
 use job::params::response::CreateJobResponse;
 use job::params::response::JobInfoResponse;
 
+/// Route used to manually test if the service is up and running
 #[get("/")]
 fn index() -> &'static str {
-    "Hello, world!"
+    "Photogrammetry service is up and running"
 }
 
+/// Route called by the orchestrator to create a job
 #[post("/job", format = "json", data = "<job_request>")]
 fn create_job(
     state: State<ProcessState>,
@@ -41,6 +43,7 @@ fn create_job(
     status::Accepted(Some(Json(response)))
 }
 
+/// Route used to access to a job's status
 #[get("/job/<id>")]
 fn info_job(state: State<ProcessState>, id: String) -> Option<Json<JobInfoResponse>> {
     let mut lock = state.process.write().expect("locking process map to write");
@@ -53,6 +56,7 @@ fn info_job(state: State<ProcessState>, id: String) -> Option<Json<JobInfoRespon
     }
 }
 
+/// map that links any job id to the associated job
 struct ProcessState {
     process: RwLock<HashMap<String, Job>>,
 }
@@ -64,7 +68,7 @@ fn main() {
     };
     rocket::ignite()
         .mount("/", routes![index, create_job, info_job])
-        .mount("/res", StaticFiles::from(env!("RES_DIR")))
+        .mount("/res", StaticFiles::from(env::get_var("RES_DIR")))
         .manage(state)
         .launch();
 }
