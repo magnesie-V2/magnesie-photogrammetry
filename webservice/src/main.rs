@@ -18,6 +18,7 @@ use job::job::Job;
 use job::params::request::CreateJobRequest;
 use job::params::response::CreateJobResponse;
 use job::params::response::JobInfoResponse;
+use std::net::SocketAddr;
 
 /// Route used to manually test if the service is up and running
 #[get("/")]
@@ -30,8 +31,9 @@ fn index() -> &'static str {
 fn create_job(
     state: State<ProcessState>,
     job_request: Json<CreateJobRequest>,
+    remote_addr: SocketAddr,
 ) -> status::Accepted<Json<CreateJobResponse>> {
-    let job = Job::new(job_request.into_inner());
+    let job = Job::new(job_request.into_inner(), remote_addr.ip());
 
     let response = CreateJobResponse {
         id: job.uuid().to_string(),

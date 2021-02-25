@@ -3,6 +3,7 @@ use uuid::Uuid;
 
 use crate::env::{get_var, PHOTOGRAMMETRY_SCRIPT};
 use crate::job::params::request::CreateJobRequest;
+use std::net::IpAddr;
 
 /// Status of a job
 #[derive(strum_macros::ToString, Debug)]
@@ -21,12 +22,17 @@ pub struct Job {
 
 impl Job {
     /// Job creation from orchestrator request
-    pub fn new(request: CreateJobRequest) -> Self {
+    pub fn new(request: CreateJobRequest, ip: IpAddr) -> Self {
         let uuid = Uuid::new_v4();
 
         let child = Command::new(get_var(PHOTOGRAMMETRY_SCRIPT))
             .arg(&uuid.to_string())
-            .arg(&request.callback.replace("<id>", &*uuid.to_string()))
+            .arg(format!(
+                "{}:{}{}",
+                ip.to_string(),
+                7878,
+                &request.callback.replace("<id>", &*uuid.to_string())
+            ))
             .args(&request.photos)
             .spawn()
             .expect("job failed to start");
