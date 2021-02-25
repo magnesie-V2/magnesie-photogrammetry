@@ -10,5 +10,5 @@ docker build --tag magnesie-photogrammetry-mock .
 ```sh
 #start a new container
 
-docker run --rm --name=magnesie-photogrammetry-mock -i -t -p 80:7879 -v $(pwd)/ref:/res magnesie-photogrammetry-mock
+docker run --rm --name=magnesie-photogrammetry-mock -i -t -p 7879:8000 -v $(pwd)/ref:/res magnesie-photogrammetry-mock
 ```
