@@ -3,16 +3,12 @@
 ## Build docker image
 
 ```sh
-#For release
 docker build --tag magnesie-photogrammetry . --no-cache
 ```
 
 ## Run docker container
 
 ```sh
-#start a new container <replace paths>
-
-#For release
 docker run --rm --name=magnesie-instance -i -t -p 7879:8000 magnesie-photogrammetry
 ```
 
