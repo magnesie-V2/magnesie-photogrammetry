@@ -61,6 +61,9 @@ RUN git clone https://github.com/cdcseacave/openMVS.git openMVS; \
   make -j2 && make install ; \
   cp -r /openMVS_build/bin/* /bin; cp /openMVS/MvgMvsPipeline.py /MvgMvsPipeline.py ; rm -rf /openMVS; rm -rf /openMVS_build
 
+# Add binaries to path
+ENV PATH $PATH:/openMVG_build/bin:/openMVS_build/bin:/sensor
+
 # Install rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh  -s -- -y
 ENV PATH $PATH:/root/.cargo/bin
@@ -74,7 +77,7 @@ ENV RES_DIR /res
 ENV PHOTOGRAMMETRY_SCRIPT /run.sh
 RUN mkdir -p /logs/job
 
-# Build webservice
+# Prepare webservice
 RUN mkdir /webservice
 COPY ./webservice /webservice
 RUN cd /webservice && cargo build --release && rm -rf target/debug
@@ -85,6 +88,5 @@ ENV PATH $PATH:/sensor
 COPY ./run.sh /
 RUN chmod a+x /run.sh
 COPY ./sensor_width_camera_database.txt /sensor
-
 
 ENTRYPOINT cd /webservice && cargo run --release
