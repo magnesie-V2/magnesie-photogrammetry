@@ -3,7 +3,7 @@
 ## Build docker image
 
 ```sh
-docker build --tag magnesie-photogrammetry . --no-cache
+./build.sh
 ```
 
 ## Run docker container

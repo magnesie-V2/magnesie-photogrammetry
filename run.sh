@@ -21,16 +21,10 @@ done
 
 echo "Downloaded images:" &>>"$LOG_FILE"
 ls "$PHOTO_DIR" &>>"$LOG_FILE"
-python3 /MvgMvsPipeline.py "$PHOTO_DIR" "$WORKDIR" &>>"$LOG_FILE"
+mvgmvs "$PHOTO_DIR" "$WORKDIR" &>>"$LOG_FILE"
 
-#mkdir -p "$MODEL_DIR"
-#cp "${WORKDIR}/mvs/"*".ply" "$MODEL_DIR/" &>>"$LOG_FILE"
-#cp "${WORKDIR}/mvs/"*".png" "$MODEL_DIR/" &>>"$LOG_FILE"
 cd "${WORKDIR}/mvs/"
 tar -zcvf "$MODEL_DEST" *.ply *.png &>>"$LOG_FILE"
 
 rm -rf "$WORKDIR"
 rm -rf "$PHOTO_DIR"
-
-echo "Notifying URL: $CALLBACK" &>>"$LOG_FILE"
-curl "$CALLBACK" &>>"$LOG_FILE"
