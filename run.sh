@@ -2,8 +2,6 @@
 
 ID="$1"
 shift
-CALLBACK="$1"
-shift
 
 PHOTO_DIR="${DATA_DIR}/${ID}"
 WORKDIR="${PHOTO_DIR}_workdir"
