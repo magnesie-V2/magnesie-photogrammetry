@@ -2,6 +2,9 @@ FROM diluka/sfm-base
 
 WORKDIR /opt
 
+# RUN apt remove cmake -y
+# RUN pip install cmake --upgrade
+
 # Install OpenMVG
 ADD OpenMVG ./OpenMVG
 RUN mkdir -p /opt/OpenMVG_build \
