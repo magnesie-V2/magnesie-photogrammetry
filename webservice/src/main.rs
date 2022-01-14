@@ -52,6 +52,7 @@ fn info_job(state: State<ProcessState>, id: String) -> Option<Json<JobInfoRespon
         None => None,
         Some(job) => Some(Json(JobInfoResponse {
             status: job.status().to_string(),
+            logs: job.logs(),
         })),
     }
 }

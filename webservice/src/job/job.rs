@@ -69,4 +69,15 @@ impl Job {
     pub fn request(&self) -> &CreateJobRequest {
         &self.request
     }
+
+    // Get photogrammetry logs since beginning
+    pub fn logs(&self) -> String {
+        let logfile = format!("/logs/job/{}", self.uuid.to_string());
+        let output = Command::new("/bin/cat")
+                .arg(logfile)
+                .output()
+                .expect("failed to read process logs");
+
+        return String::from_utf8(output.stdout).unwrap();
+    }
 }

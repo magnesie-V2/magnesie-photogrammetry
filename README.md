@@ -1,15 +1,29 @@
-# Magnes.ie - photogrammetry
+# Magnesie - photogrammetry
 
-## Build docker image
+
+## Build & Run docker container
+
+Note :
++ --privileged option for run command allows to execute turbostat or perf scripts for measuring power consumption
+
+### Production
 
 ```sh
-./build.sh
+# Build
+docker build -t photogrammetry .
+
+# Run
+docker run --rm --privileged --name=magnesie-instance -it -p 7879:8000 photogrammetry
 ```
 
-## Run docker container
+### Development
 
 ```sh
-docker run --rm --name=magnesie-instance -i -t -p 7879:8000 magnesie-photogrammetry
+# Build
+docker build -t photogrammetry-dev --file Dockerfile-dev .
+
+# Run : creating volume to follow webservice change in live
+docker run --rm --privileged --name=magnesie-instance-dev -it -p 7879:8000 -v $(pwd)/webservice:/webservice photogrammetry-dev
 ```
 
 ## Architecture
