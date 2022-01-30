@@ -1,8 +1,8 @@
 # Image containing Ubuntu 20.04, OpenMVG, OpenMVS, rust, cargo
-FROM mamerillon/photogrammetry:20.04
+FROM mamerillon/openmvgmvs:20.04
 
 # Install linux-tools for container Linux Kernel version: contains turbostat, perf scripts for measuring power consumption
-RUN apt-get install -y linux-tools-$(uname -r)
+RUN apt-get install -y linux-tools-virtual linux-generic
 
 # Add last camera database and export PATH for mvgmvs script
 COPY ./sensor_width_camera_database.txt /usr/local/share/openMVG/
