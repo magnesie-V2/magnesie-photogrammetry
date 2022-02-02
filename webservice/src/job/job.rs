@@ -17,7 +17,6 @@ pub struct Job {
     uuid: Uuid,
     child: Child,
     request: CreateJobRequest,
-    turbostat: Child,
 }
 
 impl Job {
@@ -32,26 +31,25 @@ impl Job {
         .expect("job failed to start");
 
         // Surrounding photogrammetry script with turbostat command for measuring power consumption
-        let turbologfile = format!("/logs/job/{}_turbostat", &uuid.to_string());
-
-        // Cmd: turbostat --Summary --quiet --show Time_Of_Day_Seconds,PkgWatt,CorWatt,GFXWatt,RAMWatt --interval 5 --out /logs/job/<job-id>_turbostat
-        let turbostat = Command::new("turbostat")
-        .arg("--Summary")
-        .arg("--quiet")
-        .arg("--show")
-        .arg("Time_Of_Day_Seconds,PkgWatt,CorWatt,GFXWatt,RAMWatt")
-        .arg("--interval")
-        .arg("5")
-        .arg("--out")
-        .arg(turbologfile)
-        .spawn()
-        .expect("turbostat failed to start");
+        // let turbologfile = format!("/logs/job/{}_turbostat", &uuid.to_string());
+        //
+        // // Cmd: turbostat --Summary --quiet --show Time_Of_Day_Seconds,PkgWatt,CorWatt,GFXWatt,RAMWatt --interval 5 --out /logs/job/<job-id>_turbostat
+        // let turbostat = Command::new("turbostat")
+        // .arg("--Summary")
+        // .arg("--quiet")
+        // .arg("--show")
+        // .arg("Time_Of_Day_Seconds,PkgWatt,CorWatt,GFXWatt,RAMWatt")
+        // .arg("--interval")
+        // .arg("5")
+        // .arg("--out")
+        // .arg(turbologfile)
+        // .spawn()
+        // .expect("turbostat failed to start");
 
         let job = Job {
             uuid,
             child,
             request,
-            turbostat,
         };
 
         job
@@ -65,7 +63,7 @@ impl Job {
             Some(status) => {
                 if status.success() {
                     // Ending power consumption measures
-                    let _ = &self.turbostat.kill().expect("turbostat can't be killed");
+                    // let _ = &self.turbostat.kill().expect("turbostat can't be killed");
                     Status::Finished
                 } else {
                     Status::Error

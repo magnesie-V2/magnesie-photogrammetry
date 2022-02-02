@@ -1,4 +1,8 @@
-FROM mamerillon/openmvgmvs:20.04
+# Image containing Ubuntu 20.04, OpenMVG, OpenMVS, rust, cargo
+FROM ghcr.io/magnesie-v2/openmvgmvs:20.04
+
+RUN apt update && apt install -y linux-tools-common linux-tools-generic
+RUN mv /usr/lib/linux-tools/5.4* /usr/lib/linux-tools/$(uname -r)
 
 # Add last camera database and export PATH for mvgmvs script
 COPY ./sensor_width_camera_database.txt /usr/local/share/openMVG/

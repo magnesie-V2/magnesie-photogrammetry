@@ -1,8 +1,8 @@
 # Image containing Ubuntu 20.04, OpenMVG, OpenMVS, rust, cargo
-FROM mamerillon/openmvgmvs:20.04
+FROM ghcr.io/magnesie-v2/openmvgmvs:20.04
 
-# Install linux-tools for container Linux Kernel version: contains turbostat, perf scripts for measuring power consumption
-RUN apt-get install -y linux-tools-virtual linux-generic
+RUN apt update && apt install -y linux-tools-common linux-tools-generic
+RUN mv /usr/lib/linux-tools/5.4* /usr/lib/linux-tools/$(uname -r)
 
 # Add last camera database and export PATH for mvgmvs script
 COPY ./sensor_width_camera_database.txt /usr/local/share/openMVG/
@@ -27,5 +27,4 @@ COPY ./webservice /webservice
 
 # Webservice dev environment installation and launch
 RUN cd /webservice && cargo install cargo-watch
-
 ENTRYPOINT cd /webservice && cargo watch -x run
