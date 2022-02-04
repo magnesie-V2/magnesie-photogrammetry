@@ -24,27 +24,25 @@ impl Job {
     pub fn new(request: CreateJobRequest) -> Self {
         let uuid = Uuid::new_v4();
 
-        let child = Command::new(get_var(PHOTOGRAMMETRY_SCRIPT))
-        .arg(&uuid.to_string())
-        .args(&request.photos)
-        .spawn()
-        .expect("job failed to start");
+        // Surrounding photogrammetry script with perf command for measuring power consumption
+        let perflogfile = format!("/logs/job/{}_perf", &uuid.to_string());
 
-        // Surrounding photogrammetry script with turbostat command for measuring power consumption
-        // let turbologfile = format!("/logs/job/{}_turbostat", &uuid.to_string());
-        //
-        // // Cmd: turbostat --Summary --quiet --show Time_Of_Day_Seconds,PkgWatt,CorWatt,GFXWatt,RAMWatt --interval 5 --out /logs/job/<job-id>_turbostat
-        // let turbostat = Command::new("turbostat")
-        // .arg("--Summary")
-        // .arg("--quiet")
-        // .arg("--show")
-        // .arg("Time_Of_Day_Seconds,PkgWatt,CorWatt,GFXWatt,RAMWatt")
-        // .arg("--interval")
-        // .arg("5")
-        // .arg("--out")
-        // .arg(turbologfile)
-        // .spawn()
-        // .expect("turbostat failed to start");
+        let child = Command::new("perf")
+            .arg("stat")
+            .arg("--event")
+            .arg("energy-cores")
+            .arg("-o")
+            .arg(perflogfile)
+            .arg("--interval-print")
+            .arg("5000")
+            .arg("--field-separator")
+            .arg(",")
+            .arg(get_var(PHOTOGRAMMETRY_SCRIPT))
+            .arg(&uuid.to_string())
+            .args(&request.photos)
+            .spawn()
+            .expect("job failed to start")
+            ;
 
         let job = Job {
             uuid,
@@ -62,8 +60,6 @@ impl Job {
             None => Status::InProgress,
             Some(status) => {
                 if status.success() {
-                    // Ending power consumption measures
-                    // let _ = &self.turbostat.kill().expect("turbostat can't be killed");
                     Status::Finished
                 } else {
                     Status::Error
@@ -89,13 +85,24 @@ impl Job {
         &self.request
     }
 
-    // Get photogrammetry logs since beginning
+    /// Get photogrammetry logs since beginning
     pub fn logs(&self) -> String {
         let logfile = format!("/logs/job/{}", self.uuid.to_string());
         let output = Command::new("/bin/cat")
                 .arg(logfile)
                 .output()
                 .expect("failed to read process logs");
+
+        return String::from_utf8(output.stdout).unwrap();
+    }
+
+    /// Get photogrammetry power consumption since beginning
+    pub fn power(&self) -> String {
+        let logfile = format!("/logs/job/{}_perf", self.uuid.to_string());
+        let output = Command::new("/bin/cat")
+            .arg(logfile)
+            .output()
+            .expect("failed to read process perf logs");
 
         return String::from_utf8(output.stdout).unwrap();
     }

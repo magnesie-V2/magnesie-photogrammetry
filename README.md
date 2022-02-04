@@ -19,6 +19,9 @@ oarsub -I
 # (It generates a job_id that you can use to access to the node from another terminal : $ oarsub -C <job_id>)
 # (Note the reserved node ID for next step)
 
+# Install docker on node
+g5k-setup-docker
+
 ### Install and launch your webservice...
 
 # Port forward to access to webservice from your local machine
