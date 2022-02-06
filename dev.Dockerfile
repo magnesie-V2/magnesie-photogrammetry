@@ -24,7 +24,7 @@ ENV PHOTOGRAMMETRY_SCRIPT /run.sh
 
 # Build webservice
 COPY ./webservice /webservice
-RUN cd /webservice && cargo build --release && rm -rf target/debug
 
-# Webservice production environment launch
-ENTRYPOINT cd /webservice && cargo run --release
+# Webservice dev environment installation and launch
+RUN cd /webservice && cargo install cargo-watch
+ENTRYPOINT cd /webservice && cargo watch -x run

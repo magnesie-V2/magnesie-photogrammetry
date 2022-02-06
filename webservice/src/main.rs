@@ -18,6 +18,8 @@ use job::job::Job;
 use job::params::request::CreateJobRequest;
 use job::params::response::CreateJobResponse;
 use job::params::response::JobInfoResponse;
+use job::params::response::JobPowerResponse;
+use job::params::response::JobStatusResponse;
 
 /// Route used to manually test if the service is up and running
 #[get("/")]
@@ -44,14 +46,42 @@ fn create_job(
 }
 
 /// Route used to access to a job's status
-#[get("/job/<id>")]
-fn info_job(state: State<ProcessState>, id: String) -> Option<Json<JobInfoResponse>> {
+#[get("/job/status/<id>")]
+fn job_status(state: State<ProcessState>, id: String) -> Option<Json<JobStatusResponse>> {
+    let mut lock = state.process.write().expect("locking process map to write");
+
+    match lock.get_mut(&*id) {
+        None => None,
+        Some(job) => Some(Json(JobStatusResponse {
+            status: job.status().to_string()
+        })),
+    }
+}
+
+/// Route used to access to a job's info (status + mvgmvs logs)
+#[get("/job/info/<id>")]
+fn job_info(state: State<ProcessState>, id: String) -> Option<Json<JobInfoResponse>> {
     let mut lock = state.process.write().expect("locking process map to write");
 
     match lock.get_mut(&*id) {
         None => None,
         Some(job) => Some(Json(JobInfoResponse {
             status: job.status().to_string(),
+            logs: job.logs(),
+        })),
+    }
+}
+
+/// Route used to access to a job's power (status + perf logs)
+#[get("/job/power/<id>")]
+fn job_power(state: State<ProcessState>, id: String) -> Option<Json<JobPowerResponse>> {
+    let mut lock = state.process.write().expect("locking process map to write");
+
+    match lock.get_mut(&*id) {
+        None => None,
+        Some(job) => Some(Json(JobPowerResponse {
+            status: job.status().to_string(),
+            power: job.power(),
         })),
     }
 }
@@ -67,7 +97,7 @@ fn main() {
         process: RwLock::new(HashMap::new()),
     };
     rocket::ignite()
-        .mount("/", routes![index, create_job, info_job])
+        .mount("/", routes![index, create_job, job_status, job_info, job_power])
         .mount("/res", StaticFiles::from(env::get_var("RES_DIR")))
         .manage(state)
         .launch();

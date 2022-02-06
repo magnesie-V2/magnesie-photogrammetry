@@ -24,11 +24,25 @@ impl Job {
     pub fn new(request: CreateJobRequest) -> Self {
         let uuid = Uuid::new_v4();
 
-        let child = Command::new(get_var(PHOTOGRAMMETRY_SCRIPT))
+        // Surrounding photogrammetry script with perf command for measuring power consumption
+        let perflogfile = format!("/logs/job/{}_perf", &uuid.to_string());
+
+        let child = Command::new("perf")
+            .arg("stat")
+            .arg("--event")
+            .arg("energy-cores")
+            .arg("-o")
+            .arg(perflogfile)
+            .arg("--interval-print")
+            .arg("5000")
+            .arg("--field-separator")
+            .arg(",")
+            .arg(get_var(PHOTOGRAMMETRY_SCRIPT))
             .arg(&uuid.to_string())
             .args(&request.photos)
             .spawn()
-            .expect("job failed to start");
+            .expect("job failed to start")
+            ;
 
         let job = Job {
             uuid,
@@ -52,7 +66,8 @@ impl Job {
                 }
             }
         };
-        return status;
+        return status;     
+
     }
 
     /// Uuid of the job
@@ -68,5 +83,27 @@ impl Job {
     /// Request that got this job created
     pub fn request(&self) -> &CreateJobRequest {
         &self.request
+    }
+
+    /// Get photogrammetry logs since beginning
+    pub fn logs(&self) -> String {
+        let logfile = format!("/logs/job/{}", self.uuid.to_string());
+        let output = Command::new("/bin/cat")
+                .arg(logfile)
+                .output()
+                .expect("failed to read process logs");
+
+        return String::from_utf8(output.stdout).unwrap();
+    }
+
+    /// Get photogrammetry power consumption since beginning
+    pub fn power(&self) -> String {
+        let logfile = format!("/logs/job/{}_perf", self.uuid.to_string());
+        let output = Command::new("/bin/cat")
+            .arg(logfile)
+            .output()
+            .expect("failed to read process perf logs");
+
+        return String::from_utf8(output.stdout).unwrap();
     }
 }

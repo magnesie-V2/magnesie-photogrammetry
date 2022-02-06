@@ -14,7 +14,7 @@ pub fn check_env() {
                 println!("{} configured: {}", var, val)
             }
             Err(_) => {
-                panic!(format!("You must define a {} environment variable", var));
+                panic!("You must define a {} environment variable", var);
             }
         }
     }
@@ -25,7 +25,7 @@ pub fn get_var(key: &str) -> String {
     match env::var(key) {
         Ok(val) => val,
         Err(_) => {
-            panic!(format!("{} must be defined", key));
+            panic!("{} must be defined", key);
         }
     }
 }

@@ -19,6 +19,7 @@ done
 
 echo "Downloaded images:" &>>"$LOG_FILE"
 ls "$PHOTO_DIR" &>>"$LOG_FILE"
+
 mvgmvs "$PHOTO_DIR" "$WORKDIR" &>>"$LOG_FILE"
 
 cd "${WORKDIR}/mvs/"
