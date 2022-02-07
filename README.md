@@ -39,7 +39,7 @@ Note :
 #### From GHCR
 ```sh
 # Build & Run
-docker run --rm --privileged instance -it -p 7879:8000 ghcr.io/magnesie-v2/photogrammetry
+docker run --rm --privileged --name=magnesie-instance -it -p 7879:8000 ghcr.io/magnesie-v2/photogrammetry
 ```
 
 #### From source code
