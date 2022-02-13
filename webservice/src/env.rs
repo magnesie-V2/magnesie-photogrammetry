@@ -3,8 +3,9 @@ use std::env;
 pub static DATA_DIR: &str = "DATA_DIR";
 pub static RES_DIR: &str = "RES_DIR";
 pub static PHOTOGRAMMETRY_SCRIPT: &str = "PHOTOGRAMMETRY_SCRIPT";
+pub static GET_POWER_SCRIPT: &str = "GET_POWER_SCRIPT";
 
-pub static VARS: [&str; 3] = [DATA_DIR, RES_DIR, PHOTOGRAMMETRY_SCRIPT];
+pub static VARS: [&str; 4] = [DATA_DIR, RES_DIR, PHOTOGRAMMETRY_SCRIPT, GET_POWER_SCRIPT];
 
 /// Check that all necessary environment variable have been defined
 pub fn check_env() {

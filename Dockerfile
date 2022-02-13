@@ -16,15 +16,21 @@ RUN chmod +x /opt/MvgMvs_Pipeline.py \
 WORKDIR /root
 
 # Prepare env
-COPY ./run.sh /
-RUN mkdir /data && mkdir /res && mkdir -p /logs/job && chmod a+x /run.sh
-ENV DATA_DIR /data
-ENV RES_DIR /res
-ENV PHOTOGRAMMETRY_SCRIPT /run.sh
+COPY ./run.sh ./get-power.sh /
+RUN mkdir /data && mkdir /res && mkdir -p /logs/job && chmod a+x /run.sh /get-power.sh
+ENV DATA_DIR=/data RES_DIR=/res PHOTOGRAMMETRY_SCRIPT=/run.sh GET_POWER_SCRIPT=/get-power.sh
 
-# Build webservice
+# Build webservice dependencies
+RUN cd / && cargo new playground
+WORKDIR /playground
+COPY ./webservice/Cargo.toml ./webservice/build.rs /playground/
+RUN cargo build && cargo build --release && rm src/*.rs
+
+# Build webservice source code
+WORKDIR /webservice
+
 COPY ./webservice /webservice
-RUN cd /webservice && cargo build --release && rm -rf target/debug
+RUN cargo build --release && rm -rf target/debug
 
 # Webservice production environment launch
-ENTRYPOINT cd /webservice && cargo run --release
+ENTRYPOINT cargo run --release

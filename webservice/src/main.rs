@@ -19,6 +19,7 @@ use job::params::request::CreateJobRequest;
 use job::params::response::CreateJobResponse;
 use job::params::response::JobInfoResponse;
 use job::params::response::JobPowerResponse;
+use job::params::response::JobReportResponse;
 use job::params::response::JobStatusResponse;
 
 /// Route used to manually test if the service is up and running
@@ -36,21 +37,21 @@ fn create_job(
     let job = Job::new(job_request.into_inner());
 
     let response = CreateJobResponse {
-        id: job.uuid().to_string(),
+        id: job.id.to_string(),
     };
 
     let mut lock = state.process.write().expect("locking process map to write");
-    lock.insert(job.uuid().to_string(), job);
+    lock.insert(job.id.to_string(), job);
 
     status::Accepted(Some(Json(response)))
 }
 
 /// Route used to access to a job's status
-#[get("/job/status/<id>")]
-fn job_status(state: State<ProcessState>, id: String) -> Option<Json<JobStatusResponse>> {
+#[get("/job/status/<sub_id>")]
+fn job_status(state: State<ProcessState>, sub_id: i32) -> Option<Json<JobStatusResponse>> {
     let mut lock = state.process.write().expect("locking process map to write");
 
-    match lock.get_mut(&*id) {
+    match lock.get_mut(&sub_id.to_string()) {
         None => None,
         Some(job) => Some(Json(JobStatusResponse {
             status: job.status().to_string()
@@ -81,6 +82,21 @@ fn job_power(state: State<ProcessState>, id: String) -> Option<Json<JobPowerResp
         None => None,
         Some(job) => Some(Json(JobPowerResponse {
             status: job.status().to_string(),
+            power: job.power(),
+        })),
+    }
+}
+
+/// Route used to access to a job's report (status + process logs + perf logs)
+#[get("/job/report/<id>")]
+fn job_report(state: State<ProcessState>, id: String) -> Option<Json<JobReportResponse>> {
+    let mut lock = state.process.write().expect("locking process map to write");
+
+    match lock.get_mut(&*id) {
+        None => None,
+        Some(job) => Some(Json(JobReportResponse {
+            status: job.status().to_string(),
+            logs: job.logs(),
             power: job.power(),
         })),
     }

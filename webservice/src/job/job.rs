@@ -1,7 +1,6 @@
 use std::process::{Child, Command};
-use uuid::Uuid;
 
-use crate::env::{get_var, PHOTOGRAMMETRY_SCRIPT};
+use crate::env::{get_var, PHOTOGRAMMETRY_SCRIPT, GET_POWER_SCRIPT};
 use crate::job::params::request::CreateJobRequest;
 
 /// Status of a job
@@ -14,18 +13,16 @@ pub enum Status {
 
 /// Job description
 pub struct Job {
-    uuid: Uuid,
+    pub id: i32,
     child: Child,
-    request: CreateJobRequest,
 }
 
 impl Job {
     /// Job creation from orchestrator request
     pub fn new(request: CreateJobRequest) -> Self {
-        let uuid = Uuid::new_v4();
-
+        let id: i32 = request.submission_id;
         // Surrounding photogrammetry script with perf command for measuring power consumption
-        let perflogfile = format!("/logs/job/{}_perf", &uuid.to_string());
+        let perflogfile = format!("/logs/job/{}_perf", &id.to_string());
 
         let child = Command::new("perf")
             .arg("stat")
@@ -38,16 +35,15 @@ impl Job {
             .arg("--field-separator")
             .arg(",")
             .arg(get_var(PHOTOGRAMMETRY_SCRIPT))
-            .arg(&uuid.to_string())
+            .arg(&id.to_string())
             .args(&request.photos)
             .spawn()
             .expect("job failed to start")
             ;
 
         let job = Job {
-            uuid,
+            id,
             child,
-            request,
         };
 
         job
@@ -70,39 +66,29 @@ impl Job {
 
     }
 
-    /// Uuid of the job
-    pub fn uuid(&self) -> Uuid {
-        self.uuid
-    }
-
     /// Child process (Bash) that is computing the job
     pub fn child(&self) -> &Child {
         &self.child
     }
 
-    /// Request that got this job created
-    pub fn request(&self) -> &CreateJobRequest {
-        &self.request
-    }
-
     /// Get photogrammetry logs since beginning
     pub fn logs(&self) -> String {
-        let logfile = format!("/logs/job/{}", self.uuid.to_string());
+        let logfile = format!("/logs/job/{}", self.id.to_string());
         let output = Command::new("/bin/cat")
-                .arg(logfile)
-                .output()
-                .expect("failed to read process logs");
+            .arg(logfile)
+            .output()
+            .expect("failed to read process perf logs");
 
         return String::from_utf8(output.stdout).unwrap();
     }
 
     /// Get photogrammetry power consumption since beginning
     pub fn power(&self) -> String {
-        let logfile = format!("/logs/job/{}_perf", self.uuid.to_string());
-        let output = Command::new("/bin/cat")
-            .arg(logfile)
+        let output = Command::new(get_var(GET_POWER_SCRIPT))
+            .arg(self.id.to_string())
             .output()
-            .expect("failed to read process perf logs");
+            .expect("failed to read process perf logs")
+            ;
 
         return String::from_utf8(output.stdout).unwrap();
     }

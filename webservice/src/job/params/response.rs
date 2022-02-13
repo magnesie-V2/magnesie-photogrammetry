@@ -20,6 +20,14 @@ pub struct JobPowerResponse {
     pub power: String,
 }
 
+/// Response to a job report request
+#[derive(Serialize, Deserialize, Debug)]
+pub struct JobReportResponse {
+    pub status: String,
+    pub logs: String,
+    pub power: String,
+}
+
 /// Response to a job creation request
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CreateJobResponse {

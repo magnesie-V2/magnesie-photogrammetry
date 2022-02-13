@@ -11,7 +11,6 @@ edition = "2018"
 rocket = "0.4.6"
 serde = { version = "1.0.117", features = ["derive"] }
 serde_json = "1.0.59"
-uuid = { version = "0.8", features = ["serde", "v4"] }
 strum = "0.19"
 strum_macros = "0.19"
 
