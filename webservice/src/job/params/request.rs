@@ -5,4 +5,5 @@ use serde::{Deserialize, Serialize};
 pub struct CreateJobRequest {
     pub submission_id: i32,
     pub photos: Vec<String>,
+    pub callback: String,
 }

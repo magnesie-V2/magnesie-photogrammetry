@@ -26,6 +26,7 @@ pub struct JobReportResponse {
     pub status: String,
     pub logs: String,
     pub power: String,
+    pub step: String,
 }
 
 /// Response to a job creation request

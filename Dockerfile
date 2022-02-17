@@ -6,7 +6,7 @@ RUN mv /usr/lib/linux-tools/5.4* /usr/lib/linux-tools/$(uname -r)
 
 # Add last camera database and export PATH for mvgmvs script
 COPY ./sensor_width_camera_database.txt /usr/local/share/openMVG/
-ENV PATH $PATH:/usr/local/share/openMVG
+ENV PATH $PATH:/usr/local/share/openMVG:/logs/job/
 
 # Install pipeline
 ADD MvgMvs_Pipeline.py /opt/

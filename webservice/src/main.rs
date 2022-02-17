@@ -46,6 +46,34 @@ fn create_job(
     status::Accepted(Some(Json(response)))
 }
 
+/// Route called by the orchestrator or user to stop a job
+#[post("/job/stop/<id>")]
+fn stop_job(state: State<ProcessState>, id: i32) -> Result<(),String> {
+    let mut lock = state.process.write().expect("locking process map to write");
+
+    if let Some(job) = lock.get_mut(&id.to_string()) {
+        return job.stop();
+    }
+    else {
+        Err(format!("Job {} is unknown !", &id.to_string()))
+    }
+
+}
+
+/// Route called by the orchestrator or user to start a job
+#[post("/job/start/<id>")]
+fn start_job(state: State<ProcessState>, id: i32) -> Result<(),String> {
+    let mut lock = state.process.write().expect("locking process map to write");
+
+    if let Some(job) = lock.get_mut(&id.to_string()) {
+        return job.start();
+    }
+    else {
+        Err(format!("Job {} is unknown !", &id.to_string()))
+    }
+
+}
+
 /// Route used to access to a job's status
 #[get("/job/status/<sub_id>")]
 fn job_status(state: State<ProcessState>, sub_id: i32) -> Option<Json<JobStatusResponse>> {
@@ -98,6 +126,7 @@ fn job_report(state: State<ProcessState>, id: String) -> Option<Json<JobReportRe
             status: job.status().to_string(),
             logs: job.logs(),
             power: job.power(),
+            step: job.step(),
         })),
     }
 }
@@ -113,7 +142,7 @@ fn main() {
         process: RwLock::new(HashMap::new()),
     };
     rocket::ignite()
-        .mount("/", routes![index, create_job, job_status, job_info, job_power])
+        .mount("/", routes![index, create_job, job_status, job_info, job_power, job_report, stop_job, start_job])
         .mount("/res", StaticFiles::from(env::get_var("RES_DIR")))
         .manage(state)
         .launch();
