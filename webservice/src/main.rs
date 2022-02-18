@@ -1,5 +1,6 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+mod cors;
 mod env;
 mod job;
 
@@ -145,5 +146,6 @@ fn main() {
         .mount("/", routes![index, create_job, job_status, job_info, job_power, job_report, stop_job, start_job])
         .mount("/res", StaticFiles::from(env::get_var("RES_DIR")))
         .manage(state)
+        .attach(cors::CorsFairing)
         .launch();
 }
