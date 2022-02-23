@@ -26,7 +26,7 @@ done
 echo "Downloaded images:" &>>"$LOG_FILE"
 ls "$PHOTO_DIR" &>>"$LOG_FILE"
 
-FINAL_STEP=15
+FINAL_STEP=17
 
 for step in $(seq 0 $FINAL_STEP)
 do
